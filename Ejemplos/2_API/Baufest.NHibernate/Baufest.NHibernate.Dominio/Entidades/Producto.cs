@@ -9,5 +9,7 @@
         public virtual string Descripcion { get; set; }
 
         public virtual decimal Precio { get; set; }
+
+        public virtual Categoria Categoria { get; set; }
     }
 }
