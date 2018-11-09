@@ -4,12 +4,20 @@ using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
+using System;
 
 namespace Baufest.NHibernate.Repository.Mappings
 {
     public static class Database
     {
-        public static ISessionFactory CreateSessionFactory()
+        private static readonly Lazy<ISessionFactory> sessionFactory = new Lazy<ISessionFactory>(CreateSessionFactory);
+
+        public static ISessionFactory SessionFactory
+        {
+            get { return sessionFactory.Value; }
+        }
+
+        private static ISessionFactory CreateSessionFactory()
         {
             return Fluently
                  .Configure()
