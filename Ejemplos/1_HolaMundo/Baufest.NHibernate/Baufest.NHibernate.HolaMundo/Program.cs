@@ -14,7 +14,7 @@ namespace Baufest.NHibernate.HolaMundo
             return Fluently
                  .Configure()
                  .Database(
-                     MsSqlConfiguration. .MsSql2012.ConnectionString(
+                     MsSqlConfiguration.MsSql2012.ConnectionString(
                             x => x.FromConnectionStringWithKey("IntroNH")))
                  .Mappings(m => m.AutoMappings.Add(
                             AutoMap.AssemblyOf<Producto>()
