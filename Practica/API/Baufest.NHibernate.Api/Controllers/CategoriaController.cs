@@ -1,5 +1,4 @@
 ﻿using Baufest.NHibernate.Dominio.Entidades;
-using Baufest.NHibernate.Repository.Mappings;
 using System.Collections.Generic;
 using System.Web.Http;
 
