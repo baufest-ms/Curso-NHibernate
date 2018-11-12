@@ -1,8 +1,10 @@
 ﻿using Baufest.NHibernate.Dominio.Entidades;
+using Baufest.NHibernate.HolaMundo.Mappings;
 using FluentNHibernate.Automapping;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
+using NHibernate.Cfg;
 using NHibernate.Tool.hbm2ddl;
 
 namespace Baufest.NHibernate.HolaMundo
@@ -16,9 +18,12 @@ namespace Baufest.NHibernate.HolaMundo
                  .Database(
                      MsSqlConfiguration.MsSql2012.ConnectionString(
                             x => x.FromConnectionStringWithKey("IntroNH")))
-                 .Mappings(m => m.AutoMappings.Add(
-                            AutoMap.AssemblyOf<Producto>()
-                                .Where(t => t.Namespace == typeof(Producto).Namespace)))
+
+                 .Mappings(m => m.FluentMappings.AddFromAssemblyOf<ProductoMap>())
+                 .ExposeConfiguration(cfg => {
+                     cfg.SetProperty(Environment.DefaultSchema, "dbo");
+                     cfg.SetProperty(Environment.Hbm2ddlKeyWords, "auto-quote");
+                     })
                  .ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(true, true))
                  .BuildSessionFactory();
         }

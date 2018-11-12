@@ -1,4 +1,6 @@
-﻿namespace Baufest.NHibernate.Dominio.Entidades
+﻿using System;
+
+namespace Baufest.NHibernate.Dominio.Entidades
 {
     public class Producto
     {
@@ -11,5 +13,7 @@
         public virtual decimal Precio { get; set; }
 
         public virtual Categoria Categoria { get; set; }
+
+        public virtual DateTime Insert {get; set;}
     }
 }
