@@ -15,7 +15,11 @@ namespace Baufest.NHibernate.Api.Controllers
         // GET: api/Producto/5
         public Categoria Get(int id)
         {
-            return null;
+            return new Categoria
+            {
+                Id = 1,
+                Nombre = "Una categoria"
+            };
         }
 
         // POST: api/Producto

@@ -33,8 +33,10 @@ namespace Baufest.NHibernate.HolaMundo
             var sessionfactory = CrearSessionFactory();
             using(var session = sessionfactory.OpenSession())
             {
-                var categoria = new Categoria { Nombre = "Notebooks" };
-                session.Save(categoria);
+                //var categoria = new Categoria { Nombre = "Notebooks" };
+                //session.Save(categoria);
+                var categoria = session.Load<Categoria>(1);
+                
 
                 var producto = new Producto
                 {
