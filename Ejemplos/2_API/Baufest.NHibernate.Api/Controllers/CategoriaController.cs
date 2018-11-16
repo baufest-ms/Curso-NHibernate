@@ -55,14 +55,6 @@ namespace Baufest.NHibernate.Api.Controllers
                 session.Flush();
             }
         }
-        //public void Put(Categoria categoria)
-        //{
-        //    using (var session = Database.SessionFactory.OpenSession())
-        //    {
-        //        session.Update(categoria);
-        //        session.Flush();
-        //    }
-        //}
 
         // DELETE: api/Producto/5
         [Description("Elimina la categoría especificada")]
