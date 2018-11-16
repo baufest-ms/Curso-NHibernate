@@ -16,7 +16,14 @@ namespace Baufest.NHibernate.Api.Controllers
             {
                 var productos = session.Query<Producto>().ToList();
 
-                return productos.Select(ConvertirADto);
+                return productos.Select(producto => new ProductoDto
+                {
+                    Id = producto.Id,
+                    Nombre = producto.Nombre,
+                    Descripcion = producto.Descripcion,
+                    CateagoriaId = producto.Categoria.Id,
+                    CateagoriaNombre = producto.Categoria.Nombre
+                }).ToList();
             }
         }
 
@@ -27,7 +34,16 @@ namespace Baufest.NHibernate.Api.Controllers
             {
                 var producto = session.Get<Producto>(id);
 
-                return ConvertirADto(producto);
+                return producto == null
+                    ? null
+                    : new ProductoDto
+                    {
+                        Id = producto.Id,
+                        Nombre = producto.Nombre,
+                        Descripcion = producto.Descripcion,
+                        CateagoriaId = producto.Categoria.Id,
+                        CateagoriaNombre = producto.Categoria.Nombre
+                    };
             };
         }
 
@@ -45,29 +61,33 @@ namespace Baufest.NHibernate.Api.Controllers
                 };
 
                 session.Save(producto);
+                session.Flush();
             }
         }
 
         // PUT: api/Producto/5
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody]ProductoDto value)
         {
+            using (var session = Database.SessionFactory.OpenSession())
+            {
+                var producto = session.Get<Producto>(id);
+                producto.Nombre = value.Nombre;
+                producto.Descripcion = value.Descripcion;
+                producto.Precio = value.Precio;
+                producto.Categoria = session.Load<Categoria>(value.CateagoriaId);
+
+                session.Flush();
+            }
         }
 
         // DELETE: api/Producto/5
         public void Delete(int id)
         {
-        }
-
-        private ProductoDto ConvertirADto(Producto producto)
-        {
-            return new ProductoDto
+            using (var session = Database.SessionFactory.OpenSession())
             {
-                Id = producto.Id,
-                Nombre = producto.Nombre,
-                Descripcion = producto.Descripcion,
-                CateagoriaId = producto.Categoria.Id,
-                CateagoriaNombre = producto.Categoria.Nombre
-            };
+                session.Delete(session.Get<Producto>(id));
+                session.Flush();
+            }
         }
     }
 }
