@@ -10,17 +10,32 @@ namespace Baufest.NHibernate.Api.Controllers
     public class VentaController : ApiController
     {
         // GET: api/Venta
-        public IEnumerable<VentaDto> Get()
+        public IEnumerable<VentaDto> Get([FromUri]FiltroVenta filtro)
         {
             using (var session = Database.SessionFactory.OpenSession())
             {
-                var ventas = session.Query<Venta>().ToList();
+                var ventas = session.Query<Venta>();
+
+                if(filtro.IdCliente.HasValue)
+                {
+                    ventas = ventas.Where(venta => venta.Cliente.Id == filtro.IdCliente);
+                }
+
+                if (filtro.IdProducto.HasValue)
+                {
+                    ventas = ventas.Where(venta => venta.Items.Any(item => item.Producto.Id == filtro.IdProducto));
+                }
 
                 return ventas.Select(venta => new VentaDto
                 {
                     Id = venta.Id,
                     IdCliente = venta.Cliente.Id,
-                    Items = venta.Items.Select(i => new ItemDto { IdProducto = i.Producto.Id, Cantidad = i.Cantidad }).ToList()
+                    Items = venta.Items.Select(i => new ItemDto
+                                                    {
+                                                        IdProducto = i.Producto.Id,
+                                                        NombreProducto = i.Producto.Nombre,
+                                                        Cantidad = i.Cantidad
+                                                    }).ToList()
                 }).ToList();
             }
         }
@@ -38,7 +53,7 @@ namespace Baufest.NHibernate.Api.Controllers
                     {
                         Id = venta.Id,
                         IdCliente = venta.Cliente.Id,
-                        Items = venta.Items.Select(i => new ItemDto { IdProducto = i.Producto.Id, Cantidad = i.Cantidad }).ToList()
+                        Items = venta.Items.Select(i => new ItemDto { IdProducto = i.Producto.Id, NombreProducto = i.Producto.Nombre, Cantidad = i.Cantidad }).ToList()
                     };
             };
         }
@@ -48,26 +63,29 @@ namespace Baufest.NHibernate.Api.Controllers
         {
             using (var session = Database.SessionFactory.OpenSession())
             {
-                var venta = new Venta
+                using (var transaction = session.BeginTransaction())
                 {
-                    Cliente = session.Load<Cliente>(value.IdCliente),
-                    Items = new List<Item>()
-                };
+                    var venta = new Venta
+                    {
+                        Cliente = session.Load<Cliente>(value.IdCliente),
+                        Items = new List<Item>()
+                    };
 
-                foreach(var itemDto in value.Items)
-                {
-                    var producto = session.Load<Producto>(itemDto.IdProducto);
-                    venta.Items.Add(
-                        new Item
+                    foreach (var itemDto in value.Items)
+                    {
+                        var producto = session.Load<Producto>(itemDto.IdProducto);
+                        venta.Items.Add(
+                            new Item
                             {
                                 Producto = producto,
                                 Cantidad = itemDto.Cantidad,
                                 Venta = venta
                             });
-                }
+                    }
 
-                session.Save(venta);
-                session.Flush();
+                    session.Save(venta);
+                    transaction.Commit();
+                }
             }
         }
     }

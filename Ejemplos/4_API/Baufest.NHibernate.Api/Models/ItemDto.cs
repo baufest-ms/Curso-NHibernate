@@ -9,6 +9,8 @@ namespace Baufest.NHibernate.Api.Models
     {
         public int IdProducto { get; set; }
 
+        public string NombreProducto { get; set; }
+
         public int Cantidad { get; set; }
     }
 }

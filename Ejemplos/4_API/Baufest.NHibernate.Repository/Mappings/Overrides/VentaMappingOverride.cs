@@ -8,7 +8,7 @@ namespace Baufest.NHibernate.HolaMundo.Overrides
     {
         public void Override(AutoMapping<Venta> mapping)
         {
-            mapping.HasMany(x => x.Items).Cascade.AllDeleteOrphan();
+            mapping.HasMany(x => x.Items).Inverse().Cascade.AllDeleteOrphan();
         }
     }
 }

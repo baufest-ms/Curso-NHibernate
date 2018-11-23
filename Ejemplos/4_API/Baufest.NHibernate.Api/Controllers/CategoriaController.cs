@@ -9,17 +9,23 @@ namespace Baufest.NHibernate.Api.Controllers
 {
     public class CategoriaController : ApiController
     {
-        // GET: api/Producto
+        // GET: api/Categoria
         [Description("Lista todas las categorias disponibles")]
-        public IEnumerable<Categoria> Get()
+        public IEnumerable<Categoria> Get([FromUri]string nombre = null)
         {
             using(var session = Database.SessionFactory.OpenSession())
             {
-                return session.Query<Categoria>().ToList();
+                var categorias = session.Query<Categoria>();
+                if (!string.IsNullOrEmpty(nombre))
+                {
+                    categorias = categorias.Where(cat => cat.Nombre.Contains(nombre));
+                }
+
+                return categorias.ToList();
             }
         }
 
-        // GET: api/Producto/5
+        // GET: api/Categoria/5
         [Description("Devuelve la categoría correspondiente al id")]
         public Categoria Get(int id)
         {
@@ -29,42 +35,56 @@ namespace Baufest.NHibernate.Api.Controllers
             }
         }
 
-        // POST: api/Producto
+        // POST: api/Categoria
         [Description("Crea una categoría con el nombre especificado")]
         public void Post([FromBody]string nombre)
         {
             using (var session = Database.SessionFactory.OpenSession())
             {
-                var categoria = new Categoria
+                using(var transaction = session.BeginTransaction())
                 {
-                    Nombre = nombre
-                };
+                    var categoria = new Categoria
+                    {
+                        Nombre = nombre
+                    };
 
-                session.Save(categoria);
+                    session.Save(categoria);
+
+                    transaction.Commit();
+                }
+
             }
         }
 
-        // PUT: api/Producto/5
+        // PUT: api/Categoria/5
         [Description("Actualiza el nombre de la categoría especificada")]
         public void Put(int id, [FromBody]string nombre)
         {
             using (var session = Database.SessionFactory.OpenSession())
             {
-                var categoria = session.Load<Categoria>(id);
-                categoria.Nombre = nombre;
-                session.Flush();
+                using (var transaction = session.BeginTransaction())
+                {
+                    var categoria = session.Load<Categoria>(id);
+                    categoria.Nombre = nombre;
+
+                    transaction.Commit();
+                }
             }
         }
 
-        // DELETE: api/Producto/5
+        // DELETE: api/Categoria/5
         [Description("Elimina la categoría especificada")]
         public void Delete(int id)
         {
             using (var session = Database.SessionFactory.OpenSession())
             {
-                var categoria = session.Load<Categoria>(id);
-                session.Delete(categoria);
-                session.Flush();
+                using (var transaction = session.BeginTransaction())
+                {
+                    var categoria = session.Load<Categoria>(id);
+                    session.Delete(categoria);
+
+                    transaction.Commit();
+                }
             }
         }
     }
