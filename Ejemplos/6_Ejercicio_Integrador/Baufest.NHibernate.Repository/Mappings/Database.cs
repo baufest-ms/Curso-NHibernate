@@ -1,4 +1,8 @@
-﻿using FluentNHibernate.Cfg;
+﻿using Baufest.NHibernate.Dominio.Entidades;
+using Baufest.NHibernate.Repository.Mappings.Conventions;
+using Baufest.NHibernate.Repository.Mappings.Overrides;
+using FluentNHibernate.Automapping;
+using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
@@ -21,9 +25,11 @@ namespace Baufest.NHibernate.Repository.Mappings
                  .Configure()
                  .Database(                
                         MsSqlConfiguration.MsSql2012.ConnectionString(x => x.FromConnectionStringWithKey("EjercicioNH")))
-                 //.Mappings(m => m.AutoMappings.Add(
-                 //                   AutoMap.AssemblyOf<>()
-                 //                       .Where(t => t.Namespace == typeof().Namespace)))
+                 .Mappings(m => m.AutoMappings.Add(
+                                    AutoMap.AssemblyOf<Pregunta>()
+                                        .Where(t => t.Namespace == typeof(Pregunta).Namespace)
+                                        .Conventions.AddFromAssemblyOf<ForeignKeyNameConvention>()
+                                        .UseOverridesFromAssemblyOf<PreguntaMappingOverride>))
 
                  .ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(false, true))
                  .BuildSessionFactory();

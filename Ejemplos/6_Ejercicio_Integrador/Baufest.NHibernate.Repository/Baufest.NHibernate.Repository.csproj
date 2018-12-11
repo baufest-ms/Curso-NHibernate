@@ -62,13 +62,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Mappings\Conventions\ForeignKeyNameConvention.cs" />
     <Compile Include="Mappings\Database.cs" />
+    <Compile Include="Mappings\Overrides\PreguntaMappingOverride.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mappings\Conventions\" />
-    <Folder Include="Mappings\Overrides\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
