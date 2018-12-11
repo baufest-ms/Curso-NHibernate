@@ -1,7 +1,4 @@
-﻿using FluentNHibernate.Cfg;
-using FluentNHibernate.Cfg.Db;
-using NHibernate;
-using NHibernate.Tool.hbm2ddl;
+﻿using NHibernate;
 using System;
 
 namespace Baufest.NHibernate.Repository.Mappings
@@ -17,16 +14,7 @@ namespace Baufest.NHibernate.Repository.Mappings
 
         private static ISessionFactory CreateSessionFactory()
         {
-            return Fluently
-                 .Configure()
-                 .Database(                
-                        MsSqlConfiguration.MsSql2012.ConnectionString(x => x.FromConnectionStringWithKey("EjercicioNH")))
-                 //.Mappings(m => m.AutoMappings.Add(
-                 //                   AutoMap.AssemblyOf<>()
-                 //                       .Where(t => t.Namespace == typeof().Namespace)))
-
-                 .ExposeConfiguration(cfg => new SchemaUpdate(cfg).Execute(false, true))
-                 .BuildSessionFactory();
+            throw new NotImplementedException("Implementar la configuración de NHibernate");
         }
 
 
